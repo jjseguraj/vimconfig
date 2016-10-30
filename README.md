@@ -1,2 +1,2 @@
 # vimconfig
-This project is aimed to tune Vim to get an efficient and enjoyable IDE.
+This project is aimed to have a re-usable, efficient and enjoyable Vim IDE.
