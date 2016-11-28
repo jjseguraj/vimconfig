@@ -13,8 +13,10 @@ filetype plugin indent on
 " Tagbar
 "   start on the left
 "   find ctags.exe binary
-let tagbar_left = 1
-let g:tagbar_ctags_bin='ctags'
+if has('gui_running')
+    let tagbar_left = 1
+    let g:tagbar_ctags_bin='ctags'
+endif
 
 " Look and feel
 if has('gui_running')
@@ -25,6 +27,7 @@ if has('gui_running')
     let g:airline_powerline_fonts = 1
     let g:Powerline_symbols = 'fancy'
 else
+    colorscheme slate
     if exists("+lines")
         set lines=50
     endif
@@ -40,35 +43,38 @@ set shiftwidth=4
 set expandtab
 set smartindent
 
-" NERDtree
-"   enabled by default
-"   close vim if the only remaining window is nerdtree
-autocmd vimenter * NERDTree
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+if has('gui_running')
+    " NERDtree
+    "   enabled by default
+    "   close vim if the only remaining window is nerdtree
+    autocmd vimenter * NERDTree
+    autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
-" Open NERDTree + Tagbar + MiniBufExplorer
-function! s:LayoutWindows()
-    execute 'NERDTree'
-    let nerdtree_buffer = bufnr(t:NERDTreeBufName)
-    execute 'wincmd q'
-    execute 'TagbarOpen'
-    execute 'wincmd h'
-    execute '35 wincmd |'
-    execute 'split'
-    execute 'b' . nerdtree_buffer
-    execute ':1'
-    execute 'wincmd j'
-    execute ':1'
+    " Open NERDTree + Tagbar + MiniBufExplorer
+    function! s:LayoutWindows()
+        execute 'NERDTree'
+        let nerdtree_buffer = bufnr(t:NERDTreeBufName)
+        execute 'wincmd q'
+        execute 'TagbarOpen'
+        execute 'wincmd h'
+        execute '35 wincmd |'
+        execute 'split'
+        execute 'b' . nerdtree_buffer
+        execute ':1'
+        execute 'wincmd j'
+        execute ':1'
 
-    let mbe_window = bufwinnr("-MiniBufExplorer-")
-    if mbe_window != -1
-        execute mbe_window . "wincmd w"
-        execute 'wincmd K'
-    endif
-    execute 'resize +17'
-    execute 'wincmd l'
-endfunction
-autocmd VimEnter * call<SID>LayoutWindows()
+        let mbe_window = bufwinnr("-MiniBufExplorer-")
+        if mbe_window != -1
+            execute mbe_window . "wincmd w"
+            execute 'wincmd K'
+        endif
+        execute 'resize +17'
+        execute 'wincmd ='
+        execute 'wincmd l'
+    endfunction
+    autocmd VimEnter * call<SID>LayoutWindows()
+endif
 
 " Custom behavior
 " ==========================================================================
@@ -80,7 +86,10 @@ set foldmethod=syntax
 au BufRead * normal zR
 
 " Enable highlighting and incremental search
-set hls is
+set hls is ic
+
+" De-activate line wrapping.
+set nowrap
 
 " Set the list of hidden chars to showed when ":set list" is typed
 set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
@@ -90,7 +99,7 @@ set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
 map <F12> <ESC>:NERDTreeToggle<RETURN>
 map <F11> <ESC>:TagbarToggle<RETURN>
 
-" Mappings
+" Mappings for CScope
 " ==========================================================================
 " CTags Key bindings
 "   Alt-]   opens a list of all tag locations and allows choosing one
@@ -105,9 +114,11 @@ let GtagsCscope_Auto_Load = 1
 let GtagsCscope_Auto_Map = 1
 let GtagsCscope_Quiet = 1
 set cscopetag
+
+"map Esc to a more convenient shortcut.
 imap <S-Space> <Esc>
 
-" Autamic Deactivation of CapsLock
+" Automatic Deactivation of CapsLock
 " Execute 'lnoremap x X' and 'lnoremap X x' for each letter a-z.
 for c in range(char2nr('A'), char2nr('Z'))
   execute 'lnoremap ' . nr2char(c+32) . ' ' . nr2char(c)
