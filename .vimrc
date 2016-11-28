@@ -19,20 +19,20 @@ if has('gui_running')
 endif
 
 " Look and feel
+set cc=81
+set guifont=Roboto\ Mono\ Medium\ for\ Powerline\ 11
 if has('gui_running')
     colorscheme desert
     set lines=999 columns=999
-    set cc=81
-    set guifont=Roboto\ Mono\ Medium\ for\ Powerline\ 11
     let g:airline_powerline_fonts = 1
     let g:Powerline_symbols = 'fancy'
 else
     colorscheme slate
     if exists("+lines")
-        set lines=50
+        set lines=45
     endif
     if exists("+columns")
-        set columns=100
+        set columns=80
     endif
 endif
 
@@ -43,36 +43,32 @@ set shiftwidth=4
 set expandtab
 set smartindent
 
-if has('gui_running')
-    " NERDtree
-    "   enabled by default
-    "   close vim if the only remaining window is nerdtree
-    autocmd vimenter * NERDTree
-    autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+"if has('gui_running')
+"endif
 
-    " Open NERDTree + Tagbar + MiniBufExplorer
-    function! s:LayoutWindows()
-        execute 'NERDTree'
-        let nerdtree_buffer = bufnr(t:NERDTreeBufName)
-        execute 'wincmd q'
-        execute 'TagbarOpen'
-        execute 'wincmd h'
-        execute '35 wincmd |'
-        execute 'split'
-        execute 'b' . nerdtree_buffer
-        execute ':1'
-        execute 'wincmd j'
-        execute ':1'
+" Open NERDTree + Tagbar + MiniBufExplorer
+function! s:LayoutWindows()
+    execute 'NERDTree'
+    let nerdtree_buffer = bufnr(t:NERDTreeBufName)
+    execute 'wincmd q'
+    execute 'TagbarOpen'
+    execute 'wincmd h'
+    execute '35 wincmd |'
+    execute 'split'
+    execute 'b' . nerdtree_buffer
+    execute ':1'
+    execute 'wincmd j'
+    execute ':1'
 
-        let mbe_window = bufwinnr("-MiniBufExplorer-")
-        if mbe_window != -1
-            execute mbe_window . "wincmd w"
-            execute 'wincmd K'
-        endif
-        execute 'resize +17'
-        execute 'wincmd ='
-        execute 'wincmd l'
-    endfunction
+    let mbe_window = bufwinnr("-MiniBufExplorer-")
+    if mbe_window != -1
+        execute mbe_window . "wincmd w"
+        execute 'wincmd K'
+    endif
+    execute 'resize +17'
+    execute 'wincmd l'
+endfunction
+
     autocmd VimEnter * call<SID>LayoutWindows()
 endif
 
@@ -85,11 +81,8 @@ nnoremap <space> :noh<return>
 set foldmethod=syntax
 au BufRead * normal zR
 
-" Enable highlighting and incremental search
+" Enable highlighting, incremental search and ignore case
 set hls is ic
-
-" De-activate line wrapping.
-set nowrap
 
 " Set the list of hidden chars to showed when ":set list" is typed
 set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
